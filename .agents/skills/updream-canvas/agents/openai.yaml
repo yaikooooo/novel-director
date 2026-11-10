@@ -1,0 +1,4 @@
+interface:
+  display_name: "UPDREAM 节点铺设"
+  short_description: "通过 UPDREAM 内置 AI 铺设参考图、角色音频、提示词和视频节点，配置后停在生成前"
+  default_prompt: "使用 $updream-canvas，在 Codex 内置浏览器（iab）接手用户当前已打开、已登录并调好的 UPDREAM 页面，通过网站内置 AI 铺设指定段落，实附并绑定角色声线样音与参考图，配置 Seedance 2.5、480P、16:9，时长按提示词向上取整，停在生成前。"

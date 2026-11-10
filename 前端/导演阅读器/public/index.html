@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>导演阅读器</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/example">导演阅读器</a>
+    <label class="chapter-picker">作品与章节 <select id="chapterSelect" aria-label="作品与章节"></select></label>
+    <div class="header-actions">
+      <a href="/voices">声线库</a>
+      <a href="/example">示例</a>
+      <a href="/数据接口.md" target="_blank" rel="noopener">数据约定</a>
+      <button id="refresh">刷新数据</button>
+    </div>
+  </header>
+  <noscript><p class="notice">请在浏览器中打开本地阅读器并启用 JavaScript。原始数据和图片保存在章节目录。</p></noscript>
+  <div id="loadError" class="notice error" role="alert" hidden></div>
+  <section class="chapter-header">
+    <div><div id="workName" class="muted"></div><h1 id="chapterName">正在读取示例</h1><p id="chapterMeta"></p></div>
+    <div id="counts" class="counts"></div>
+  </section>
+  <p id="exampleNote" class="notice" hidden>这是阅读器的生产格式示例。图形用于演示画格与状态，选择上方章节可查看实际作品。</p>
+  <details id="contractIssues" class="notice error" hidden><summary id="issueSummary"></summary><div id="issueList"></div></details>
+  <main class="workspace">
+    <aside class="navigation">
+      <input id="search" type="search" placeholder="搜索镜号、内容或台词" aria-label="搜索镜头">
+      <div id="shotList" class="shot-list" aria-label="镜组与镜头"></div>
+      <button id="docsButton" class="docs-button">章节文稿与原件</button>
+    </aside>
+    <section class="reading">
+      <div class="toolbar">
+        <div class="segmented" aria-label="画面来源">
+          <button data-source="board" class="active">分镜图册</button>
+          <button data-source="formal">正式分镜</button>
+        </div>
+        <div class="segmented" id="modeButtons" aria-label="浏览方式">
+          <button data-mode="frame" class="active">逐镜</button><button data-mode="page">原页</button>
+        </div>
+      </div>
+      <div id="imageReading">
+        <div class="frame-heading"><div><strong id="frameLabel"></strong><span id="frameTiming"></span></div><span id="frameStatus" class="status"></span></div>
+        <p id="frameNotice" class="frame-notice" hidden></p>
+        <div class="viewer" id="viewer">
+          <div id="art" class="art"></div>
+        </div>
+        <div class="image-actions">
+          <span id="imageCaption"></span>
+          <div><label><input id="annotations" type="checkbox" checked>标注</label><button id="zoomOut" aria-label="缩小">−</button><button id="fit">适合窗口</button><button id="zoomIn" aria-label="放大">＋</button><button id="fullscreen">全屏</button><a id="original" target="_blank" rel="noopener">原件 ↗</a></div>
+        </div>
+        <div class="sequence"><button id="previous">← 上一幅</button><div id="frameChips" class="frame-chips"></div><button id="next">下一幅 →</button></div>
+        <section class="watching"><h2 id="intent"></h2><p id="composition"></p></section>
+      </div>
+      <section id="documentReading" hidden>
+        <div id="documentList" class="document-list"></div>
+        <article id="documentBody" class="markdown"></article>
+      </section>
+    </section>
+    <aside class="details">
+      <div class="detail-tabs" aria-label="镜头资料">
+        <button data-detail="direction" class="active">拍法</button>
+        <button data-detail="motion">运镜提示词</button>
+        <button data-detail="sound">声音文字</button>
+        <button data-detail="space">机位</button>
+        <button data-detail="status">状态</button>
+      </div>
+      <div id="detailBody"></div>
+    </aside>
+  </main>
+  <footer><span id="revision"></span><span>← → 翻阅 · ＋ − 缩放</span><a id="sourceData" target="_blank" rel="noopener">章节数据</a></footer>
+</body>
+</html>

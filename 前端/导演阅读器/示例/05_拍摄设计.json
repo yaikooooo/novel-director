@@ -1,0 +1,786 @@
+{
+  "schema_version": 4,
+  "data_revision": 3,
+  "design_revision": 1,
+  "design_status": "working",
+  "design": {
+    "project": {
+      "title": "阅读器示例",
+      "chapter": "门边的回望",
+      "aspect_ratio": "16:9",
+      "resolution_px": [
+        1920,
+        1080
+      ],
+      "pixel_aspect": 1,
+      "fps": {
+        "num": 24,
+        "den": 1
+      },
+      "frame_range": [
+        1,
+        360
+      ],
+      "budget_sec": 15,
+      "sound_mode": "声音仅以文字呈现",
+      "source_refs": [
+        {
+          "path": "示例说明.md"
+        }
+      ]
+    },
+    "shot_order": [
+      "S001",
+      "S002",
+      "S003",
+      "S004",
+      "S005",
+      "S006",
+      "B001"
+    ],
+    "shots": {
+      "S001": {
+        "kind": "camera",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          1,
+          72
+        ],
+        "intent": "先认清门、桌与独坐者的关系",
+        "composition": {
+          "scale_in": "远景",
+          "frame_description": "远景中门在左，人物及桌在右，窗光从右侧进入。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [
+          {
+            "frame": 9,
+            "event": "本镜代表动作触发"
+          }
+        ],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "先认清门、桌与独坐者的关系",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [
+          {
+            "cue_ref": "AMB",
+            "active_frame_range": [
+              1,
+              72
+            ],
+            "continues_from_previous": false,
+            "continues_to_next": true
+          },
+          {
+            "cue_ref": "STEP",
+            "active_frame_range": [
+              61,
+              72
+            ],
+            "continues_from_previous": false,
+            "continues_to_next": true
+          }
+        ],
+        "design_frames": [
+          {
+            "id": "S001-F01",
+            "representative_frame": 36,
+            "display_frame_range": [
+              1,
+              72
+            ],
+            "requirement": "远景中门在左，人物及桌在右，窗光从右侧进入。",
+            "status": "generated",
+            "observation": {
+              "status": "adopted",
+              "notes": "示例采用状态，空间关系可读。"
+            },
+            "annotations": [
+              {
+                "kind": "camera",
+                "points": [
+                  [
+                    0.27,
+                    0.82
+                  ],
+                  [
+                    0.08,
+                    0.82
+                  ]
+                ],
+                "label_at": [
+                  0.05,
+                  0.74
+                ],
+                "label": "脚步先到，再向门侧移",
+                "author_step": "07"
+              }
+            ],
+            "sheet_ref": "P01",
+            "panel_id": "P01",
+            "panel_region": [
+              20,
+              20,
+              640,
+              360
+            ],
+            "raw_panel_region": [
+              20,
+              20,
+              640,
+              360
+            ]
+          }
+        ]
+      },
+      "S002": {
+        "kind": "camera",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          73,
+          132
+        ],
+        "intent": "门外脚步打断正在翻书的动作",
+        "composition": {
+          "scale_in": "中景",
+          "frame_description": "腰上人物与桌角同框，右手搭在书页，眼睛向门。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [
+          {
+            "frame": 81,
+            "event": "本镜代表动作触发"
+          }
+        ],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "门外脚步打断正在翻书的动作",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [
+          {
+            "cue_ref": "AMB",
+            "active_frame_range": [
+              73,
+              132
+            ],
+            "continues_from_previous": true,
+            "continues_to_next": true
+          },
+          {
+            "cue_ref": "STEP",
+            "active_frame_range": [
+              73,
+              110
+            ],
+            "continues_from_previous": true,
+            "continues_to_next": false
+          },
+          {
+            "cue_ref": "VO01",
+            "active_frame_range": [
+              90,
+              126
+            ],
+            "continues_from_previous": false,
+            "continues_to_next": false
+          }
+        ],
+        "design_frames": [
+          {
+            "id": "S002-F01",
+            "representative_frame": 102,
+            "display_frame_range": [
+              73,
+              132
+            ],
+            "requirement": "腰上人物与桌角同框，右手搭在书页，眼睛向门。",
+            "status": "generated",
+            "observation": {
+              "status": "adopted",
+              "notes": "示例采用状态，停手与视线可读。"
+            },
+            "annotations": [
+              {
+                "kind": "action",
+                "points": [
+                  [
+                    0.65,
+                    0.26
+                  ],
+                  [
+                    0.44,
+                    0.26
+                  ]
+                ],
+                "label_at": [
+                  0.07,
+                  0.13
+                ],
+                "label": "手先停，视线随后转向门"
+              },
+              {
+                "kind": "note",
+                "label_at": [
+                  0.05,
+                  0.91
+                ],
+                "label": "固定机位",
+                "author_step": "07"
+              }
+            ],
+            "sheet_ref": "P01",
+            "panel_id": "P02",
+            "panel_region": [
+              680,
+              20,
+              640,
+              360
+            ],
+            "raw_panel_region": [
+              680,
+              20,
+              640,
+              360
+            ]
+          }
+        ]
+      },
+      "S003": {
+        "kind": "camera",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          133,
+          180
+        ],
+        "intent": "看清手停在半页，等待下一声",
+        "composition": {
+          "scale_in": "大特写",
+          "frame_description": "只取书页与停住的右手，脸处于画外。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [
+          {
+            "frame": 141,
+            "event": "本镜代表动作触发"
+          }
+        ],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "看清手停在半页，等待下一声",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [
+          {
+            "cue_ref": "AMB",
+            "active_frame_range": [
+              133,
+              180
+            ],
+            "continues_from_previous": true,
+            "continues_to_next": true
+          }
+        ],
+        "design_frames": [
+          {
+            "id": "S003-F01",
+            "representative_frame": 156,
+            "display_frame_range": [
+              133,
+              180
+            ],
+            "requirement": "只取书页与停住的右手，脸处于画外。",
+            "status": "generated",
+            "observation": {
+              "status": "needs_revision",
+              "notes": "示例待修状态，手部遮挡需调整。"
+            },
+            "annotations": [
+              {
+                "kind": "action",
+                "points": [
+                  [
+                    0.75,
+                    0.55
+                  ],
+                  [
+                    0.61,
+                    0.55
+                  ]
+                ],
+                "label_at": [
+                  0.05,
+                  0.16
+                ],
+                "label": "指尖停住，书页未翻完"
+              }
+            ],
+            "sheet_ref": "P01",
+            "panel_id": "P03",
+            "panel_region": [
+              20,
+              400,
+              640,
+              360
+            ],
+            "raw_panel_region": [
+              20,
+              400,
+              640,
+              360
+            ]
+          }
+        ]
+      },
+      "S004": {
+        "kind": "camera",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          181,
+          240
+        ],
+        "intent": "视线转向门口，身体仍留在椅上",
+        "composition": {
+          "scale_in": "全景",
+          "frame_description": "完整人物和门框同幅，肩朝门转，脚留在桌侧。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [
+          {
+            "frame": 189,
+            "event": "本镜代表动作触发"
+          }
+        ],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "视线转向门口，身体仍留在椅上",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [
+          {
+            "cue_ref": "AMB",
+            "active_frame_range": [
+              181,
+              240
+            ],
+            "continues_from_previous": true,
+            "continues_to_next": true
+          }
+        ],
+        "design_frames": [
+          {
+            "id": "S004-F01",
+            "representative_frame": 210,
+            "display_frame_range": [
+              181,
+              240
+            ],
+            "requirement": "完整人物和门框同幅，肩朝门转，脚留在桌侧。",
+            "status": "generated",
+            "observation": {
+              "status": "generated",
+              "notes": "已生成，等待采用决定。"
+            },
+            "annotations": [
+              {
+                "kind": "action",
+                "points": [
+                  [
+                    0.65,
+                    0.36
+                  ],
+                  [
+                    0.51,
+                    0.36
+                  ]
+                ],
+                "label_at": [
+                  0.06,
+                  0.15
+                ],
+                "label": "肩转向门，脚不离地"
+              }
+            ],
+            "sheet_ref": "P01",
+            "panel_id": "P04",
+            "panel_region": [
+              680,
+              400,
+              640,
+              360
+            ],
+            "raw_panel_region": [
+              680,
+              400,
+              640,
+              360
+            ]
+          }
+        ]
+      },
+      "S005": {
+        "kind": "camera",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          241,
+          288
+        ],
+        "intent": "视线落点交给空门框",
+        "composition": {
+          "scale_in": "特写",
+          "frame_description": "门框占主体，画外人物的视线由前镜带入。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [
+          {
+            "frame": 249,
+            "event": "本镜代表动作触发"
+          }
+        ],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "视线落点交给空门框",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [
+          {
+            "cue_ref": "AMB",
+            "active_frame_range": [
+              241,
+              288
+            ],
+            "continues_from_previous": true,
+            "continues_to_next": true
+          }
+        ],
+        "design_frames": [
+          {
+            "id": "S005-F01",
+            "representative_frame": 264,
+            "display_frame_range": [
+              241,
+              288
+            ],
+            "requirement": "门框占主体，画外人物的视线由前镜带入。",
+            "status": "required_not_generated",
+            "observation": {
+              "status": "required_not_generated",
+              "notes": "保留需求与时码，尚未生成图像。"
+            },
+            "annotations": []
+          }
+        ]
+      },
+      "S006": {
+        "kind": "camera",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          289,
+          336
+        ],
+        "intent": "让未完成的画面需求保持可见",
+        "composition": {
+          "scale_in": "中景",
+          "frame_description": "一幅受阻状态的画面需求，等待制作决定。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [
+          {
+            "frame": 297,
+            "event": "本镜代表动作触发"
+          }
+        ],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "让未完成的画面需求保持可见",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [
+          {
+            "cue_ref": "AMB",
+            "active_frame_range": [
+              289,
+              336
+            ],
+            "continues_from_previous": true,
+            "continues_to_next": false
+          }
+        ],
+        "design_frames": [
+          {
+            "id": "S006-F01",
+            "representative_frame": 312,
+            "display_frame_range": [
+              289,
+              336
+            ],
+            "requirement": "一幅受阻状态的画面需求，等待制作决定。",
+            "status": "blocked",
+            "observation": {
+              "status": "blocked",
+              "notes": "演示受阻状态，等待后续处理。"
+            },
+            "annotations": []
+          }
+        ]
+      },
+      "B001": {
+        "kind": "black",
+        "group_ref": "G01",
+        "scene_ref": "SC01",
+        "frame_range": [
+          337,
+          360
+        ],
+        "intent": "收束在一秒黑场",
+        "composition": {
+          "scale_in": "黑场",
+          "frame_description": "黑场。"
+        },
+        "blocking": {
+          "start": "人物坐在桌边翻书",
+          "progression_and_end": "脚步声入后停手，目光转向门",
+          "state_source_ref": "WAIT"
+        },
+        "anchors": [],
+        "axis_ref": "A01",
+        "lighting_ref": "L01",
+        "look_ref": "LOOK01",
+        "edit": {
+          "incoming": "hard_cut",
+          "in_state": "接住前镜注意落点",
+          "out_state": "收束在一秒黑场",
+          "out_reason": "让观众从当前对象转向下一处证据",
+          "overlap_frames": 0
+        },
+        "sound_cues": [],
+        "design_frames": []
+      }
+    },
+    "shot_groups": {
+      "G01": {
+        "shot_ids": [
+          "S001",
+          "S002",
+          "S003",
+          "S004",
+          "S005",
+          "S006",
+          "B001"
+        ],
+        "intent": "安静阅读 → 停手倾听 → 望向门口",
+        "viewpoint": "先看现场，再跟随人物注意力",
+        "knowledge_change": "只交代脚步来源方向，门外人物保持画外",
+        "continuity": {
+          "entry": "人物坐桌边，书翻到一半",
+          "change_and_carry": "听见脚步后停手并回望"
+        }
+      }
+    },
+    "scenes": {
+      "SC01": {
+        "name": "候车室 · 午后",
+        "source_ref": "示例说明.md",
+        "coordinate_system": "+X东、+Y北、+Z上",
+        "origin": "房间中心",
+        "plan_ref": "机位示例.svg",
+        "plan_size": [
+          900,
+          620
+        ],
+        "plan_regions": {
+          "G01": [
+            0,
+            0,
+            900,
+            620
+          ]
+        },
+        "state_refs": {
+          "WAIT": {
+            "entry": "坐姿读书",
+            "exit": "身体留在桌边，眼线转向门"
+          }
+        }
+      }
+    },
+    "board_sheets": {
+      "P01": {
+        "image_ref": "原页示例.svg",
+        "width_px": 1340,
+        "height_px": 780,
+        "group_refs": [
+          "G01"
+        ],
+        "frame_ids": [
+          "S001-F01",
+          "S002-F01",
+          "S003-F01",
+          "S004-F01"
+        ],
+        "status": "needs_revision",
+        "observation": "示例原页有2幅采用、1幅待修和1幅待采用，逐格状态以各镜记录为准。",
+        "generation": {
+          "tool": "reader_demo_svg",
+          "prompt": "阅读器功能示意，演示四个独立镜头的格位映射。",
+          "references": []
+        }
+      }
+    },
+    "sound_timeline": {
+      "AMB": {
+        "kind": "ambience",
+        "source": "窗外雨后滴水",
+        "text": "稀疏滴水维持底声，跨镜延续。",
+        "frame_range": [
+          1,
+          336
+        ],
+        "listening_and_continuity": "听点随人物留在室内。"
+      },
+      "STEP": {
+        "kind": "effect",
+        "source": "门外脚步",
+        "text": "两声脚步由远至近，停在门外。",
+        "frame_range": [
+          61,
+          110
+        ],
+        "accent_frames": [
+          65,
+          93
+        ],
+        "listening_and_continuity": "第一声在远景末段进入，第二声跨到中景。"
+      },
+      "VO01": {
+        "kind": "dialogue",
+        "source": "人物 · 现场低声",
+        "text": "有人吗？",
+        "frame_range": [
+          90,
+          126
+        ],
+        "accent_frames": [
+          102
+        ]
+      }
+    },
+    "lighting_setups": {
+      "L01": {
+        "name": "右侧窗光",
+        "description": "柔和侧光保持人物与门框体积。"
+      }
+    },
+    "look_setups": {
+      "LOOK01": {
+        "name": "示例概括灰度",
+        "description": "用形状区分空间与人物，彩色箭头区分动作和机位。"
+      }
+    },
+    "review": {
+      "plan": {
+        "status": "working",
+        "scope": "示例以6个摄影镜头和1段黑场演示阅读结构。"
+      },
+      "board": {
+        "status": "working",
+        "scope": "演示采用、待修、待采用、待生成、受阻五种状态。",
+        "findings": [
+          {
+            "shot_ids": [
+              "S003"
+            ],
+            "status": "needs_revision",
+            "finding": "示例问题，手部遮挡需要调整。"
+          }
+        ]
+      }
+    }
+  },
+  "motion_design": {
+    "source_design_revision": 1,
+    "status": "working",
+    "shot_ids": [
+      "S001",
+      "S002"
+    ],
+    "shots": {
+      "S001": {
+        "frame_id": "S001-F01",
+        "intent": "让门外脚步打断观众对室内的观察。",
+        "prompt": "3秒。起幅用远景同时看见左侧房门与右侧桌边的人，右窗光照着书页。前段保持参考图的空间关系，约1.46秒仍处于正式图构图。约2.5秒门外传来脚步，摄影机才朝门的方向横移，把门在画面中的分量加重，桌边的人仍在右侧。刚建立向门的动势便切到人物中景，脚步延续。"
+      },
+      "S002": {
+        "frame_id": "S002-F01",
+        "intent": "让停手与迟来的转头显出人物对脚步的在意。",
+        "prompt": "2.5秒。承接前镜的脚步，固定在人物腰以上的中景，书页和桌角留在下方，窗光继续从画右进入。人物先停住翻页的手，稍后才向画左门口转眼；约1.21秒经过正式图中手搭书页、视线朝门的构图。摄影机留在原位，看他保持这个迟疑姿势。落幅保住手与侧脸，脚步尾音消退后，接下一镜的手部特写。"
+      }
+    },
+    "review": {
+      "scope": "仅演示 S001、S002 的提示词字段和阅读；其他镜号待设计。",
+      "findings": []
+    }
+  }
+}

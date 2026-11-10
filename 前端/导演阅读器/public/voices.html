@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>公共声线库 · 导演阅读器</title>
+  <link rel="stylesheet" href="/voices.css">
+  <script type="module" src="/voices.js"></script>
+</head>
+<body>
+  <header><a class="brand" href="/example">导演阅读器</a><nav><a href="/example">分镜阅读</a><a href="/voices" aria-current="page">声线库</a><a id="guide" target="_blank" rel="noopener">入库与选配说明 ↗</a><button id="refresh">刷新</button></nav></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">公共资源 / 声线</p><h1>为下一位角色，找到声音。</h1><p>按标签寻找，听过样音再选定。角色绑定在各作品资产库维护。</p></div><div id="stats" class="stats" aria-live="polite">正在读取声线库…</div></section>
+    <p id="error" role="alert" hidden></p>
+    <section class="filters" aria-label="筛选声线">
+      <label class="search">搜索<input id="search" type="search" placeholder="音色、名称、口音、台词或声线 ID" aria-label="搜索声线"></label>
+      <label>语言<select id="language" aria-label="语言"></select></label>
+      <label>声音<select id="gender" aria-label="声音"></select></label>
+      <label>年龄／听感<select id="age" aria-label="年龄听感"></select></label>
+      <label>音色类别<select id="type" aria-label="音色类别"></select></label>
+      <label>来源<select id="collection" aria-label="来源"></select></label>
+      <button id="reset">重置</button>
+    </section>
+    <p class="basis">标签沿用原本地清单，尚未逐条听审；有冲突的语言标为“待核实”。</p>
+    <section class="workspace">
+      <section class="results"><div class="result-heading"><h2>声线候选 <span id="count"></span></h2><span>点击条目试听</span></div><div id="list" class="voice-list" aria-label="声线列表"></div><div class="paging"><button id="previous">上一页</button><span id="page"></span><button id="next">下一页</button></div></section>
+      <aside id="detail" aria-label="试听与声线资料"><p class="empty">选择一条声线，查看原始样音与来源。</p></aside>
+    </section>
+  </main>
+  <footer>样音保存在公共资源，原件与标签可持续扩充。<a id="indexLink" target="_blank" rel="noopener">查看声线索引 ↗</a></footer>
+</body>
+</html>
