@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "library_id": "shared-voice-library",
+  "title": "公共声线库",
+  "updated_at": "",
+  "path_base": "声线索引.json所在目录",
+  "scope": "跨项目声线参考样音；角色绑定在各作品资产库维护",
+  "summary": {
+    "voices": 0,
+    "samples": 0,
+    "bytes": 0,
+    "collections": {},
+    "languages": {},
+    "language_conflicts": 0,
+    "short_samples": 0
+  },
+  "voices": []
+}

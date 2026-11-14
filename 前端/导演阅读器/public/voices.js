@@ -2,7 +2,7 @@ const $ = id => document.getElementById(id);
 const base = '/files/' + ['公共资源','声线库'].map(encodeURIComponent).join('/') + '/';
 const fileURL = relative => base + relative.split('/').map(encodeURIComponent).join('/');
 const fields = {language: v=>v.labels.language, gender:v=>v.labels.gender_presentation, age:v=>v.labels.age_impression, type:v=>v.labels.voice_type, collection:v=>v.collection};
-let voices=[], filtered=[], page=0, selected='', player=null;
+let voices=[], filtered=[], page=0, selected='', player=null, needsSetup=false;
 const pageSize=30;
 const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;};
 const seconds=x=>Number(x).toFixed(1)+'秒';
@@ -22,7 +22,7 @@ function renderList(){
     if(v.review.issues.length)b.append(node('div','flag',v.review.issues.join(' · ')));
     b.addEventListener('click',()=>{selected=v.voice_id;history.replaceState(null,'','#'+encodeURIComponent(selected));showDetail();renderList();});$('list').append(b);
   }
-  if(!filtered.length)$('list').append(node('p','empty','没有匹配的声线。试试减少筛选条件。'));
+  if(!filtered.length)$('list').append(node('p','empty',needsSetup?'本机尚未配置声线库。请按使用说明恢复索引和样音，或从空白模板建库。':!voices.length?'声线库为空，请按使用说明添加样音。':'没有匹配的声线。试试减少筛选条件。'));
   const pages=Math.max(1,Math.ceil(filtered.length/pageSize));$('page').textContent=(page+1)+' / '+pages;$('previous').disabled=page===0;$('next').disabled=page+1>=pages;
 }
 function showDetail(){
@@ -52,7 +52,8 @@ function showDetail(){
 }
 async function load(){
   $('error').hidden=true;
-  try{const res=await fetch(fileURL('声线索引.json'),{cache:'no-store'});if(!res.ok)throw new Error('声线索引读取失败：'+res.status);const data=await res.json();voices=data.voices;
+  try{const res=await fetch(fileURL('声线索引.json'),{cache:'no-store'});needsSetup=res.status===404;if(!res.ok&&!needsSetup)throw new Error('声线索引读取失败：'+res.status);const data=needsSetup?{voices:[]}:await res.json();voices=data.voices;
+    $('indexLink').href=fileURL(needsSetup?'声线索引.example.json':'声线索引.json');
     $('stats').replaceChildren();for(const [n,label] of [[voices.length,'条声线'],[new Set(voices.map(v=>v.collection)).size,'组来源'],[voices.filter(v=>v.labels.language==='中文').length,'条中文标签']]){const e=node('div','stat');e.append(node('strong','',n),node('span','',label));$('stats').append(e);}
     for(const [id,get] of Object.entries(fields)){const previous=$(id).value;$(id).replaceChildren();const all=node('option','','全部');all.value='';$(id).append(all);for(const v of [...new Set(voices.map(get))].sort((a,b)=>a.localeCompare(b,'zh-CN'))){const o=node('option','',v);o.value=v;$(id).append(o);}$(id).value=previous;}
     const fromHash=decodeURIComponent(location.hash.slice(1));selected=voices.some(v=>v.voice_id===fromHash)?fromHash:selected;filter();showDetail();

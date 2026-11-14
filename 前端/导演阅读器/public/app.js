@@ -6,7 +6,7 @@ const statusNames = {
   adopted: '采用', accepted: '采用', pass: '采用', approved: '已审定',
   needs_revision: '待修', needs_fix: '待修', blocked: '工具拦截',
   generated: '已生成 · 待采用', required_not_generated: '待生成',
-  working: '设计中', review_ready: '待审', pending: '待生成',
+  working: '设计中', review_ready: '待审', pending: '待生成', pending_design: '待分镜设计',
 };
 const labels = {
   description: '说明', start: '入镜', progression_and_end: '发展与出镜',
@@ -14,7 +14,7 @@ const labels = {
   placement: '位置与高度', view_direction: '拍向', perspective_intent: '透视意图',
   motion: '摄影机运动', focus: '焦点', subject: '关注对象', mode: '方式',
   pov: '视点', owner: '所属人物', handheld: '手持', enabled: '启用',
-  scale_in: '计划景别', scale_out: '落幅景别', frame_description: '构图',
+  scale_in: '代表景别', scale_out: '落幅景别', frame_description: '构图',
   crop_continuity: '裁切连续', board_adoption_note: '采用决定', type: '类型',
   incoming: '入镜接法', in_state: '入镜状态', out_state: '出镜状态',
   out_reason: '切出理由', attention_handoff: '注意承接', overlap_frames: '重叠帧',
@@ -147,10 +147,15 @@ function renderHeader() {
   const duration = project().frame_range ? (project().frame_range[1] - project().frame_range[0] + 1) / fps() : 0;
   $('chapterMeta').textContent = shots.length ? shots.length + ' 镜 · ' + duration.toFixed(1) + ' 秒 · ' + fps() + ' fps · ' + (project().aspect_ratio || '') : '章节文稿';
   $('counts').replaceChildren();
-  const counts = state.payload.counts;
+  const waitingFrames = shots.flatMap(shot => shot.design_frames || []).filter(frame =>
+    !['adopted', 'accepted', 'pass', 'approved', 'needs_revision', 'needs_fix', 'blocked'].includes(observedStatus(frame)));
+  const counts = { ...state.payload.counts,
+    awaiting_review: waitingFrames.filter(frame => frame.board_art).length,
+    pending: waitingFrames.filter(frame => !frame.board_art).length,
+  };
   for (const [key, label, style] of [
     ['adopted', '幅采用', 'adopted'], ['needs_revision', '幅待修', 'revision'],
-    ['blocked', '幅受阻', ''], ['pending', '幅待完成', ''],
+    ['blocked', '幅受阻', ''], ['awaiting_review', '幅待采用', ''], ['pending', '幅待补正式图', ''],
   ]) {
     if (!counts[key] && key !== 'adopted') continue;
     const count = el('div', 'count ' + style);
@@ -193,14 +198,14 @@ function renderList() {
       const top = el('div', 'shot-top');
       top.append(el('span', 'dot ' + statusClass(status)), el('strong', '', id),
         el('span', '', shot.kind === 'black' ? '黑场' : shot.composition?.scale_in || ''));
-      button.append(top, el('p', 'shot-description', shot.intent || ''));
+      button.append(top, el('p', 'shot-description', shot.edit?.description || shot.intent || ''));
       list.append(button);
     }
   }
   if (!list.children.length) list.append(el('p', 'muted', state.query ? '没有匹配的镜头' : '本章尚无拍摄设计'));
 }
 
-function imageSVG(sheet, region, hotspots = false, annotate = true) {
+function imageSVG(sheet, region, hotspots = false, annotate = true, annotationRegion = null) {
   const box = region || [0, 0, sheet.width_px, sheet.height_px];
   const svg = svgElement('svg', { viewBox: box.join(' '), width: box[2], height: box[3],
     role: 'img', 'aria-label': region ? '关键画面 ' + current().frame.id : '原页 ' + state.pageId });
@@ -222,14 +227,15 @@ function imageSVG(sheet, region, hotspots = false, annotate = true) {
   }
   if ($('annotations').checked && annotate) {
     const frames = hotspots ? state.frames.filter(frame => frame.sheet_ref === state.pageId) : [current().frame];
-    for (const frame of frames) addAnnotations(svg, frame);
+    for (const frame of frames) addAnnotations(svg, frame, annotationRegion);
   }
   return svg;
 }
 
-function addAnnotations(svg, frame) {
-  if (!frame?.panel_region || !frame.annotations?.length) return;
-  const [x, y, width, height] = frame.panel_region;
+function addAnnotations(svg, frame, region = null) {
+  const box = region || frame?.panel_region;
+  if (!box || !frame?.annotations?.length) return;
+  const [x, y, width, height] = box;
   const fontSize = Math.max(10, width * .024);
   for (const [index, annotation] of frame.annotations.entries()) {
     const color = annotation.kind === 'camera' ? '#426a9a' : '#aa553f';
@@ -268,10 +274,14 @@ function renderImage() {
   $('original').hidden = true;
   $('frameNotice').hidden = true;
   $('imageCaption').textContent = '';
-  $('frameLabel').textContent = frame ? frame.id + ' / ' + (shot.composition?.scale_in || '黑场') : '';
+  $('frameLabel').textContent = frame ? frame.id + ' / ' + (shot.kind === 'black' ? '黑场' : shot.composition?.scale_in || '景别待06设计') : '';
   $('frameTiming').textContent = shot ? rangeText(shot.frame_range) : '';
   $('frameStatus').replaceWith(Object.assign(badge(frame?.is_black ? '黑场' : observedStatus(frame || {})), { id: 'frameStatus' }));
   if (!frame) { emptyArt('等待拍摄设计', '可先从章节文稿与原件阅读已有内容。'); return; }
+  if (frame.is_edit_only) {
+    emptyArt('剪辑已排，分镜待设计', shot.edit?.description);
+    return;
+  }
   if (frame.is_black && state.mode !== 'page') {
     art.append(el('div', 'black-art')); $('imageCaption').textContent = '黑场按原时间线显示'; return;
   }
@@ -298,6 +308,12 @@ function renderImage() {
     const boardArt = frame.board_art;
     if (!boardArt) { emptyArt('正式分镜待交付', frame.requirement); return; }
     const img = el('img');
+    img.addEventListener('load', () => {
+      if (!img.isConnected) return;
+      const region = [0, 0, img.naturalWidth, img.naturalHeight];
+      img.replaceWith(imageSVG({ image_ref: boardArt, width_px: img.naturalWidth,
+        height_px: img.naturalHeight }, region, false, true, region));
+    }, { once: true });
     img.src = assetURL(boardArt); img.alt = frame.id + ' 正式分镜';
     art.append(img); $('original').href = img.src; $('original').hidden = false;
     $('imageCaption').textContent = '代表帧 F' + frame.representative_frame;
@@ -310,7 +326,7 @@ function applyZoom() {
   $('art').style.width = Math.round(state.zoom * 100) + '%';
 }
 function renderFrameText() {
-  $('intent').textContent = current().shot?.intent || '';
+  $('intent').textContent = current().shot?.edit?.description || current().shot?.intent || '';
   $('composition').textContent = current().shot?.composition?.frame_description || '';
 }
 function renderChips() {
@@ -322,7 +338,7 @@ function renderChips() {
   for (const item of items) {
     const button = el('button', item.id === frame?.id ? 'active' : '', item.id);
     button.dataset.frame = item.id;
-    button.append(el('small', '', 'F' + item.representative_frame));
+    button.append(el('small', '', item.is_edit_only ? '剪辑' : 'F' + item.representative_frame));
     chips.append(button);
   }
   const position = state.mode === 'page' ? state.pages.indexOf(state.pageId) : state.index;
@@ -383,6 +399,14 @@ function renderDetails() {
   const motionDesign = state.payload.document.motion_design;
   const motion = motionDesign?.shots?.[frame.shot_id];
   const motionSummary = motion?.intent || '待 07 设计运镜提示词';
+  if (state.detail === 'direction' && group.edit_plan) {
+    body.append(section('本段剪辑方案', group.edit_plan));
+  }
+  if (frame.is_edit_only && state.detail === 'direction') {
+    body.append(section('切点与声画承接', shot.edit?.description || shot.edit),
+      section('上游原件', { 段落: group.source_ref, 场地: scene.source_ref, 原件: project().source_refs }, true));
+    return;
+  }
   if (state.detail === 'motion') {
     if (frame.is_black) { body.append(section('黑场', '沿剪辑时码显示黑场。')); return; }
     if (!motion) { body.append(section('运镜提示词', '待 07 根据正式分镜设计。')); return; }
@@ -426,7 +450,7 @@ function renderDetails() {
       const card = el('section', 'cue');
       const head = el('div', 'cue-head');
       head.append(el('strong', '', cue.source || active.cue_ref), el('span', '', rangeText(active.active_frame_range)));
-      card.append(head, el('p', '', cue.text),
+      card.append(head, el('p', '', cue.text || cue.source_ref || ''),
         el('small', '', (active.continues_from_previous ? '承前镜延续' : '本镜进入') + ' · ' +
           (active.continues_to_next ? '延续至后镜' : '本镜结束')));
       if (cue.listening_and_continuity) card.append(el('p', '', cue.listening_and_continuity));
@@ -434,7 +458,7 @@ function renderDetails() {
       body.append(card);
     }
   } else if (state.detail === 'space') {
-    if (!frame.is_black) {
+    if (!frame.is_black && !frame.is_edit_only) {
       body.append(section('代表机位', shot.camera?.placement || '依正式分镜的静态视点'),
         section('拍向与运动', { 拍向: shot.camera?.view_direction, 运镜: motionSummary, 提示词: motion?.prompt }));
     }
@@ -453,9 +477,11 @@ function renderDetails() {
       const link = el('a', '', '打开完整机位图 ↗');
       link.href = assetURL(scene.plan_ref); link.target = '_blank'; body.append(link);
     }
-    body.append(section('轴线与变化', { axis_ref: shot.axis_ref, 轴线事件: shot.axis_events }),
-      section('现场状态', scene.state_refs?.[shot.blocking?.state_source_ref] || group.continuity),
-      section('场地与资产', scene, true));
+    if (!frame.is_edit_only) {
+      body.append(section('轴线与变化', { axis_ref: shot.axis_ref, 轴线事件: shot.axis_events }),
+        section('现场状态', scene.state_refs?.[shot.blocking?.state_source_ref] || group.continuity));
+    }
+    body.append(section('场地与资产来源', scene, true));
   } else {
     body.append(section('本幅状态', { status: frame.is_black ? '黑场' : observedStatus(frame), ...frame.observation }),
       section('原页观察', sheet?.observation),

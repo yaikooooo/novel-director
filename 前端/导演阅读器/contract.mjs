@@ -3,6 +3,7 @@ export const READER_VERSION = 2;
 export const DATA_FILE = '05_拍摄设计.json';
 
 export function observedStatus(frame) {
+  if (frame.is_edit_only) return 'pending_design';
   return frame.observation?.status || frame.status || 'required_not_generated';
 }
 
@@ -16,7 +17,10 @@ export function designFrames(document) {
       return [{ id, shot_id: id, is_black: true, representative_frame: shot.frame_range[0],
         display_frame_range: shot.frame_range }];
     }
-    return (shot.design_frames || []).map(frame => ({ ...frame, shot_id: id }));
+    if (!shot.design_frames?.length) {
+      return [{ id, shot_id: id, is_edit_only: true, display_frame_range: shot.frame_range }];
+    }
+    return shot.design_frames.map(frame => ({ ...frame, shot_id: id }));
   });
 }
 
@@ -57,6 +61,7 @@ export function validateDesign(document) {
   if (!Array.isArray(order) || !order.length) return [...errors, { field: 'design.shot_order', message: '须至少有一个镜头。' }];
   const ids = new Set();
   const framesById = new Map();
+  const boardRequired = ['review_ready', 'approved'].includes(document.design_status);
   let previousEnd = project.frame_range?.[0] - 1;
   for (const id of order) {
     const shot = design.shots?.[id];
@@ -70,10 +75,19 @@ export function validateDesign(document) {
     const overlap = shot.edit?.overlap_frames || 0;
     if (start !== previousEnd + 1 - overlap) add(base + '.frame_range', '切点存在未声明的缺口或重叠。');
     previousEnd = end;
-    if ((end - start + 1) / fps > 3.00001) add(base + '.frame_range', '本段时长超过3秒。');
+    const durationBasis = shot.duration_basis;
+    const extendedCamera = shot.kind === 'camera' && ['advanced_camera', 'long_take'].includes(durationBasis?.type) &&
+      typeof durationBasis.reason === 'string' && durationBasis.reason.trim().length > 0;
+    if (durationBasis !== undefined && !extendedCamera) {
+      add(base + '.duration_basis', '已确认长镜头用 type=long_take，高阶镜头用 advanced_camera，并在 reason 引用既定方案及用时；普通段省略。');
+    }
+    if ((end - start + 1) / fps > 3.00001 && !extendedCamera) {
+      add(base + '.frame_range', '普通单镜超过3秒；只有登记上游既定来源的长镜头或高阶镜头可超过3秒。');
+    }
     if (!design.shot_groups?.[shot.group_ref]) add(base + '.group_ref', '镜组引用不存在。');
     if (shot.kind === 'camera' && !design.scenes?.[shot.scene_ref]) add(base + '.scene_ref', '场景引用不存在。');
-    if (shot.kind === 'camera' && !shot.design_frames?.length) add(base + '.design_frames', '摄影镜头须有关键画面需求。');
+    if (!shot.edit || typeof shot.edit !== 'object' || !Object.keys(shot.edit).length) add(base + '.edit', '须记录具体切点和声画承接。');
+    if (boardRequired && shot.kind === 'camera' && !shot.design_frames?.length) add(base + '.design_frames', '提交分镜审定时须有06设计的代表图记录；05剪辑阶段无需填写。');
     if (shot.kind === 'camera' && shot.design_frames?.length > 1) add(base + '.design_frames', '新版制作约定每镜一幅代表图，动作阶段使用箭头和文字表达。');
     let frameEnd = start - 1;
     for (const frame of shot.design_frames || []) {

@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="1490" viewBox="0 0 1360 1490" role="img" aria-labelledby="title desc">
+  <title id="title">场地调度图示例：走廊会合撤离</title>
+  <desc id="desc">同一走廊的相向接近、回身合流、门前让行三个连续阶段。图中R1为两人互动，V1至V4为实际看向，M1至M3为两人及门扇的运动。保留关系变化、光区与声源，不设摄影主轴、观看侧或机位，不按比例。</desc>
+  <defs>
+    <style>
+      text { font-family: 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif; fill: #203446; }
+      .label { font-size: 18px; }
+      .small { font-size: 16px; }
+      .stage { font-size: 25px; font-weight: 700; }
+      .actor { font-size: 17px; font-weight: 700; fill: white; text-anchor: middle; }
+      .wall { stroke: #6c7c87; stroke-width: 4; fill: #f8fafb; }
+      .route-a { fill: none; stroke: #1677b6; stroke-width: 6; marker-end: url(#arrow-a); }
+      .route-z { fill: none; stroke: #c66b20; stroke-width: 6; marker-end: url(#arrow-z); }
+      .relation { fill: none; stroke: #b04765; stroke-width: 3; stroke-dasharray: 7 7; }
+      .movement { fill: none; stroke: #b04765; stroke-width: 3; stroke-dasharray: 16 5 3 5; marker-end: url(#arrow-axis); }
+      .sight { fill: none; stroke: #248477; stroke-width: 2.5; stroke-dasharray: 4 5; marker-end: url(#arrow-sight); }
+    </style>
+    <marker id="arrow-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8 Z" fill="#1677b6"/></marker>
+    <marker id="arrow-z" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8 Z" fill="#c66b20"/></marker>
+    <marker id="arrow-axis" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8 Z" fill="#b04765"/></marker>
+    <marker id="arrow-sight" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L8 4 L0 8 Z" fill="#248477"/></marker>
+    <g id="scene">
+      <rect x="200" y="45" width="880" height="175" rx="8" class="wall"/>
+      <rect x="30" y="70" width="170" height="125" rx="8" fill="#e9edf0" stroke="#6c7c87" stroke-width="3"/>
+      <rect x="1080" y="70" width="140" height="125" rx="8" fill="#eaf3ed" stroke="#6c7c87" stroke-width="3"/>
+      <path d="M200 95 V170 M1080 95 V170" stroke="#f8fafb" stroke-width="8"/>
+      <path d="M405 45 L500 220 L375 220 L340 45 Z M665 45 L760 220 L635 220 L600 45 Z" fill="#dcecf6" opacity=".7"/>
+      <path d="M340 45 H405 M600 45 H665 M860 45 H925" stroke="#73acc7" stroke-width="10"/>
+      <text x="630" y="27" class="label" text-anchor="middle">北侧窗 · 断续冷光</text>
+      <rect x="540" y="187" width="130" height="33" rx="4" fill="#f0ded3" stroke="#ad7d63" stroke-width="2"/>
+      <text x="605" y="210" class="small" text-anchor="middle">消防柜</text>
+      <ellipse cx="1065" cy="130" rx="65" ry="83" fill="#d7ebd4" opacity=".65"/>
+      <rect x="1045" y="35" width="70" height="20" rx="3" fill="#76a981"/>
+      <text x="1080" y="24" class="small" text-anchor="middle">应急灯</text>
+      <text x="115" y="128" class="label" font-weight="700" text-anchor="middle">办公室</text>
+      <text x="115" y="155" class="small" text-anchor="middle">门响／追来脚步</text>
+      <text x="1150" y="130" class="label" font-weight="700" text-anchor="middle">楼梯口</text>
+      <text x="1150" y="157" class="small" text-anchor="middle">离场方向</text>
+      <path d="M208 100 Q238 132 208 164 M224 91 Q266 132 224 173" fill="none" stroke="#8a6b9e" stroke-width="3"/>
+      <text x="35" y="244" class="small">西</text>
+      <text x="1195" y="244" class="small">东</text>
+    </g>
+  </defs>
+
+  <rect width="1360" height="1490" fill="#f3f5f7"/>
+  <rect x="0" y="0" width="1360" height="112" fill="#203446"/>
+  <text x="54" y="50" font-size="31" font-weight="700" style="fill:#fff">场地调度图｜走廊会合撤离</text>
+  <text x="56" y="83" font-size="17" style="fill:#d2dce4">虚构方法示例 · 全部实际关系按事件落图 · 不选摄影主轴与观看侧 · 不按比例</text>
+  <text x="1270" y="53" font-size="24" text-anchor="middle" style="fill:#fff">北 ↑</text>
+  <text x="1270" y="82" font-size="16" text-anchor="middle" style="fill:#d2dce4">南 ↓</text>
+
+  <path d="M58 145 H105" class="route-a"/><text x="116" y="151" class="small">M1 阿宁</text>
+  <path d="M255 145 H302" class="route-z"/><text x="313" y="151" class="small">M2 周川</text>
+  <path d="M451 145 H498" class="relation"/><text x="509" y="151" class="small">关系轴</text>
+  <path d="M638 145 H685" class="movement"/><text x="696" y="151" class="small">运动轴</text>
+  <path d="M825 145 H862" class="sight"/><text x="872" y="151" class="small">视线轴</text>
+  <rect x="1001" y="132" width="34" height="23" rx="4" fill="#dcecf6"/><text x="1048" y="151" class="small">光区</text>
+  <path d="M1174 133 Q1192 145 1174 157" fill="none" stroke="#8a6b9e" stroke-width="3"/><text x="1198" y="151" class="small">声源</text>
+
+  <rect x="32" y="178" width="1296" height="398" rx="16" fill="#fff" stroke="#d9e1e6"/>
+  <text x="60" y="217" class="stage">相向接近 · 问答已经开始</text>
+  <g transform="translate(60 235)">
+    <use href="#scene"/>
+    <path d="M310 155 L980 105" class="relation"/>
+    <text x="570" y="78" class="small" style="fill:#9f3c59">R1：接近中的问答</text>
+    <path d="M340 143 L945 96" class="sight"/>
+    <path d="M945 122 L342 168" class="sight"/>
+    <text x="490" y="113" class="small" style="fill:#248477">V1 → 周川</text>
+    <text x="665" y="182" class="small" style="fill:#248477">V2 → 阿宁</text>
+    <path d="M350 155 C480 155 610 150 740 145" class="route-a"/>
+    <path d="M940 105 C900 105 855 105 805 105" class="route-z"/>
+    <circle cx="310" cy="155" r="29" fill="#1677b6"/><text x="310" y="161" class="actor">阿宁</text>
+    <circle cx="980" cy="105" r="29" fill="#c66b20"/><text x="980" y="111" class="actor">周川</text>
+    <text x="355" y="205" class="small" style="fill:#126796">M1 向东，边靠近边回答</text>
+    <text x="805" y="60" class="small" style="fill:#a45519">M2 向西，迎上时问话</text>
+    <path d="M949 112 L870 139 L865 106 Z" fill="#f4d997" opacity=".5"/>
+    <text x="280" y="266" class="small">关系线与互看视线重合：分别标出对象；M1、M2此时相向。</text>
+  </g>
+  <text x="62" y="556" class="small">阿宁右手抱文件夹；周川左手提手电。问答开始于两人相向接近的途中。</text>
+
+  <rect x="32" y="594" width="1296" height="410" rx="16" fill="#fff" stroke="#d9e1e6"/>
+  <text x="60" y="633" class="stage">回身合流 · 边交谈边撤离</text>
+  <g transform="translate(60 650)">
+    <use href="#scene"/>
+    <text x="340" y="84" class="small" style="fill:#9f3c59">M2 回身后与M1共同向东</text>
+    <path d="M830 60 V235" class="relation"/>
+    <text x="850" y="231" class="small" style="fill:#9f3c59">R1：并行、抓袖与催促</text>
+    <path d="M805 136 Q784 130 805 119" class="sight"/>
+    <path d="M855 120 Q875 130 855 139" class="sight"/>
+    <text x="695" y="128" class="small" style="fill:#248477">V1／V2 回看</text>
+    <path d="M804 168 Q520 210 210 150" class="sight"/>
+    <text x="260" y="174" class="small" style="fill:#248477">V3 向办公室回看未完成，未见门后人</text>
+    <path d="M855 88 L1065 86" class="sight"/>
+    <path d="M810 82 C765 65 765 108 800 108" class="route-z"/>
+    <text x="689" y="77" class="small" style="fill:#a45519">听到回应便回身</text>
+    <path d="M862 105 H1055" class="route-z"/>
+    <path d="M862 155 H1055" class="route-a"/>
+    <circle cx="830" cy="105" r="26" fill="#c66b20"/><text x="830" y="111" class="actor">周川</text>
+    <circle cx="830" cy="155" r="26" fill="#1677b6"/><text x="830" y="161" class="actor">阿宁</text>
+    <path d="M853 96 L1020 71 L1020 119 Z" fill="#f4d997" opacity=".5"/>
+    <text x="930" y="68" class="small">V4 目光／手电转向楼梯口</text>
+    <text x="912" y="183" class="small">并行撤离</text>
+    <text x="240" y="266" class="small">回身后R1随位置转向；V1／V2仅在回看发生时有效，不表示一直对视。</text>
+  </g>
+  <text x="62" y="966" class="small">办公室门响 → 阿宁回看未完成 → 抓袖绷紧、目光回到周川；其他行动继续。</text>
+  <text x="62" y="991" class="small">关系轴、回看与去路同时保留；06自行选择当前镜头的摄影主轴、观看侧及承接。</text>
+
+  <rect x="32" y="1022" width="1296" height="438" rx="16" fill="#fff" stroke="#d9e1e6"/>
+  <text x="60" y="1061" class="stage">门前让行 · 松袖、穿门与带合</text>
+  <g transform="translate(60 1080)">
+    <use href="#scene"/>
+    <rect x="1105" y="110" width="105" height="65" fill="#eaf3ed"/>
+    <text x="1160" y="94" class="label" font-weight="700" text-anchor="middle">楼梯口</text>
+    <path d="M990 105 L1140 155" class="relation"/>
+    <path d="M875 155 H1185" class="route-a"/>
+    <path d="M990 105 Q1020 125 1050 105 H1185" class="route-z"/>
+    <circle cx="990" cy="105" r="26" fill="#c66b20"/><text x="990" y="111" class="actor">周川</text>
+    <circle cx="1140" cy="155" r="26" fill="#1677b6"/><text x="1140" y="161" class="actor">阿宁</text>
+    <path d="M1015 88 L1080 85" class="sight"/>
+    <path d="M1080 95 L1125 58" stroke="#6c7c87" stroke-width="4" fill="none"/>
+    <path d="M1080 160 Q1150 140 1125 60" class="movement"/>
+    <text x="545" y="87" class="small" style="fill:#9f3c59">R1：撑门让行，阿宁松开衣袖</text>
+    <text x="595" y="121" class="small" style="fill:#248477">V4：周川朝楼梯门</text>
+    <text x="585" y="164" class="small" style="fill:#126796">M1：阿宁先穿门向东</text>
+    <text x="720" y="207" class="small" style="fill:#a45519">M2：周川随后向东通过</text>
+    <text x="315" y="266" class="small">M3 门扇：右手推开 → 阿宁通过 → 周川带合；关门声与门后声场衔接。</text>
+  </g>
+  <text x="62" y="1401" class="small">关门后，R1让行关系结束；两人沿原方向离场。门后脚步仍在，不能因离开画面而消失。</text>
+  <text x="62" y="1432" class="small">图中编号供关系引用，不规定镜号、摄影主次、观看半区、机高或拍向。</text>
+</svg>

@@ -1,13 +1,43 @@
+# 本机生产数据：保留在磁盘，不随程序和工作法上传。
+/项目/
 /临时/
+/公共资源/*
+!/公共资源/声线库/
+/公共资源/声线库/*
+!/公共资源/声线库/使用说明.md
+!/公共资源/声线库/声线索引.example.json
+
+# 依赖、构建结果与运行缓存。
 **/node_modules/
 **/__pycache__/
 *.py[cod]
-/.venv/
-/venv/
+**/.venv/
+**/venv/
+**/.cache/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/dist/
+**/build/
+**/coverage/
+*.log
+*.pid
+
+# 本机配置和凭据；只允许不含真实值的环境变量示例。
 .env
 .env.*
 !.env.example
-*.log
-*.pid
+*.local
+*.local.*
+/.codex/
+/.vscode/
+/.idea/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 系统文件。
 .DS_Store
 Thumbs.db
+Desktop.ini
