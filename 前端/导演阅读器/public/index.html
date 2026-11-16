@@ -12,6 +12,7 @@
     <a class="brand" href="/example">导演阅读器</a>
     <label class="chapter-picker">作品与章节 <select id="chapterSelect" aria-label="作品与章节"></select></label>
     <div class="header-actions">
+      <a id="assetsLink" href="/assets?chapter=example">03资产交付</a>
       <a href="/voices">声线库</a>
       <a href="/example">示例</a>
       <a href="/数据接口.md" target="_blank" rel="noopener">数据约定</a>
@@ -33,24 +34,29 @@
       <button id="docsButton" class="docs-button">章节文稿与原件</button>
     </aside>
     <section class="reading">
-      <div class="toolbar">
-        <div class="segmented" aria-label="画面来源">
-          <button data-source="board" class="active">分镜图册</button>
-          <button data-source="formal">正式分镜</button>
-        </div>
-        <div class="segmented" id="modeButtons" aria-label="浏览方式">
-          <button data-mode="frame" class="active">逐镜</button><button data-mode="page">原页</button>
-        </div>
-      </div>
       <div id="imageReading">
         <div class="frame-heading"><div><strong id="frameLabel"></strong><span id="frameTiming"></span></div><span id="frameStatus" class="status"></span></div>
         <p id="frameNotice" class="frame-notice" hidden></p>
-        <div class="viewer" id="viewer">
-          <div id="art" class="art"></div>
+        <div class="image-comparison" id="imageComparison">
+          <section class="image-pane" aria-label="分镜图册">
+            <div class="pane-heading">
+              <h2>分镜图册</h2>
+              <div class="segmented" id="modeButtons" aria-label="图册浏览方式">
+                <button data-mode="frame" class="active">逐镜</button><button data-mode="page">原页</button>
+              </div>
+            </div>
+            <div class="viewer" id="viewer"><div id="art" class="art"></div></div>
+            <div class="pane-caption"><span id="imageCaption"></span><a id="original" target="_blank" rel="noopener">图册原件 ↗</a></div>
+          </section>
+          <section class="image-pane" aria-label="正式分镜">
+            <div class="pane-heading"><h2>正式分镜</h2></div>
+            <div class="viewer" id="formalViewer"><div id="formalArt" class="art"></div></div>
+            <div class="pane-caption"><span id="formalCaption"></span><a id="formalOriginal" target="_blank" rel="noopener">正式原件 ↗</a></div>
+          </section>
         </div>
         <div class="image-actions">
-          <span id="imageCaption"></span>
-          <div><label><input id="annotations" type="checkbox" checked>标注</label><button id="zoomOut" aria-label="缩小">−</button><button id="fit">适合窗口</button><button id="zoomIn" aria-label="放大">＋</button><button id="fullscreen">全屏</button><a id="original" target="_blank" rel="noopener">原件 ↗</a></div>
+          <span>同一镜头 · 左右对照</span>
+          <div><label><input id="annotations" type="checkbox" checked>标注</label><button id="zoomOut" aria-label="缩小">−</button><button id="fit">适合窗口</button><button id="zoomIn" aria-label="放大">＋</button><button id="fullscreen">全屏</button></div>
         </div>
         <div class="sequence"><button id="previous">← 上一幅</button><div id="frameChips" class="frame-chips"></div><button id="next">下一幅 →</button></div>
         <section class="watching"><h2 id="intent"></h2><p id="composition"></p></section>

@@ -39,7 +39,7 @@ const labels = {
 const state = {
   id: new URLSearchParams(location.search).get('chapter') || 'example',
   payload: null, frames: [], pages: [], index: 0, pageId: null,
-  mode: 'frame', source: 'board', detail: 'direction', query: '', zoom: 1,
+  mode: 'frame', detail: 'direction', query: '', zoom: 1,
   docs: false, docName: '', request: 0,
 };
 
@@ -89,7 +89,7 @@ function badge(status) { return el('span', 'status ' + statusClass(status), stat
 function syncRoute() {
   const id = state.mode === 'page' ? state.pageId : current().frame?.id;
   const url = '/?chapter=' + encodeURIComponent(state.id) +
-    (state.source !== 'board' ? '&view=' + state.source : '') + (id ? '#' + encodeURIComponent(id) : '');
+    (id ? '#' + encodeURIComponent(id) : '');
   history.replaceState(null, '', url);
 }
 async function getJSON(url) {
@@ -133,7 +133,7 @@ async function loadChapter(preserve = false) {
     if (state.pages.includes(prior)) { state.pageId = prior; state.mode = 'page'; }
     else { state.pageId = current().frame?.sheet_ref || state.pages[0]; if (!preserve) state.mode = 'frame'; }
     state.docs = !payload.document;
-    if (!preserve) { state.source = new URLSearchParams(location.search).get('view') === 'formal' ? 'formal' : 'board'; state.zoom = 1; }
+    if (!preserve) state.zoom = 1;
     renderHeader();
     render();
     if (state.docs) renderDocuments();
@@ -141,6 +141,7 @@ async function loadChapter(preserve = false) {
 }
 
 function renderHeader() {
+  $('assetsLink').href = '/assets?chapter=' + encodeURIComponent(state.id);
   $('workName').textContent = project().title || state.id.split('/')[0];
   $('chapterName').textContent = project().chapter || state.id.split('/').at(-1);
   const shots = Object.values(design().shots || {}).filter(shot => shot.kind === 'camera');
@@ -205,10 +206,10 @@ function renderList() {
   if (!list.children.length) list.append(el('p', 'muted', state.query ? '没有匹配的镜头' : '本章尚无拍摄设计'));
 }
 
-function imageSVG(sheet, region, hotspots = false, annotate = true, annotationRegion = null) {
+function imageSVG(sheet, region, hotspots = false, annotate = true, annotationRegion = null, source = 'board') {
   const box = region || [0, 0, sheet.width_px, sheet.height_px];
   const svg = svgElement('svg', { viewBox: box.join(' '), width: box[2], height: box[3],
-    role: 'img', 'aria-label': region ? '关键画面 ' + current().frame.id : '原页 ' + state.pageId });
+    role: 'img', 'aria-label': source === 'formal' ? '正式分镜 ' + current().frame.id : region ? '关键画面 ' + current().frame.id : '原页 ' + state.pageId });
   const image = svgElement('image', { href: assetURL(sheet.image_ref), x: 0, y: 0,
     width: sheet.width_px, height: sheet.height_px });
   image.addEventListener('error', () => errorMessage('原图加载失败，请检查章节素材引用 ' + sheet.image_ref));
@@ -227,19 +228,19 @@ function imageSVG(sheet, region, hotspots = false, annotate = true, annotationRe
   }
   if ($('annotations').checked && annotate) {
     const frames = hotspots ? state.frames.filter(frame => frame.sheet_ref === state.pageId) : [current().frame];
-    for (const frame of frames) addAnnotations(svg, frame, annotationRegion);
+    for (const frame of frames) addAnnotations(svg, frame, annotationRegion, source);
   }
   return svg;
 }
 
-function addAnnotations(svg, frame, region = null) {
+function addAnnotations(svg, frame, region = null, source = 'board') {
   const box = region || frame?.panel_region;
   if (!box || !frame?.annotations?.length) return;
   const [x, y, width, height] = box;
   const fontSize = Math.max(10, width * .024);
   for (const [index, annotation] of frame.annotations.entries()) {
     const color = annotation.kind === 'camera' ? '#426a9a' : '#aa553f';
-    const markerId = 'arrow-' + frame.id + '-' + index;
+    const markerId = 'arrow-' + source + '-' + frame.id + '-' + index;
     const marker = svgElement('marker', { id: markerId, viewBox: '0 0 10 10', refX: 9, refY: 5,
       markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' });
     marker.append(svgElement('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: color }));
@@ -261,69 +262,90 @@ function addAnnotations(svg, frame, region = null) {
   }
 }
 
-function emptyArt(title, text) {
+function emptyArt(title, text, art = $('art')) {
   const box = el('div', 'empty-art');
   box.append(el('strong', '', title), el('p', '', text || ''));
-  $('art').append(box);
+  art.append(box);
 }
 
 function renderImage() {
   const { frame, shot, sheet } = current();
   const art = $('art');
-  art.replaceChildren();
-  $('original').hidden = true;
-  $('frameNotice').hidden = true;
-  $('imageCaption').textContent = '';
+  const formalArt = $('formalArt');
+  for (const target of [art, formalArt]) { target.replaceChildren(); target.style.width = ''; }
+  for (const id of ['original', 'formalOriginal', 'frameNotice']) $(id).hidden = true;
+  $('imageCaption').textContent = ''; $('formalCaption').textContent = '';
   $('frameLabel').textContent = frame ? frame.id + ' / ' + (shot.kind === 'black' ? '黑场' : shot.composition?.scale_in || '景别待06设计') : '';
   $('frameTiming').textContent = shot ? rangeText(shot.frame_range) : '';
   $('frameStatus').replaceWith(Object.assign(badge(frame?.is_black ? '黑场' : observedStatus(frame || {})), { id: 'frameStatus' }));
-  if (!frame) { emptyArt('等待拍摄设计', '可先从章节文稿与原件阅读已有内容。'); return; }
-  if (frame.is_edit_only) {
-    emptyArt('剪辑已排，分镜待设计', shot.edit?.description);
+  if (!frame || frame.is_edit_only) {
+    for (const target of [art, formalArt]) emptyArt(frame ? '剪辑已排，分镜待设计' : '等待拍摄设计',
+      shot?.edit?.description || '可先从章节文稿与原件阅读已有内容。', target);
     return;
   }
   if (frame.is_black && state.mode !== 'page') {
-    art.append(el('div', 'black-art')); $('imageCaption').textContent = '黑场按原时间线显示'; return;
-  }
-  if (state.source === 'board') {
+    art.append(el('div', 'black-art')); $('imageCaption').textContent = '黑场按原时间线显示';
+  } else {
     const page = state.mode === 'page' ? design().board_sheets?.[state.pageId] : sheet;
     if (!page) {
-      emptyArt(observedStatus(frame) === 'blocked' ? '该格受阻，尚未生成' : '该格等待制作',
-        frame.requirement || shot.intent);
+      emptyArt(observedStatus(frame) === 'blocked' ? '该格受阻，尚未生成' : '该格等待制作', frame.requirement || shot.intent);
       $('imageCaption').textContent = frame.observation?.notes || '画面需求与时码已保留';
-      return;
+    } else {
+      art.append(imageSVG(page, state.mode === 'page' ? null : frame.panel_region, state.mode === 'page'));
+      $('original').href = assetURL(page.image_ref); $('original').hidden = false;
+      $('imageCaption').textContent = state.mode === 'page' ?
+        '原页 ' + state.pageId + ' · 点击画格进入逐镜' :
+        frame.sheet_ref + ' / ' + frame.panel_id + ' · 代表帧 F' + frame.representative_frame;
+      const status = state.mode === 'page' ? page.status : observedStatus(frame);
+      if (['needs_revision', 'needs_fix'].includes(status)) {
+        $('frameNotice').hidden = false;
+        $('frameNotice').textContent = state.mode === 'page' ? page.observation :
+          frame.observation?.notes || '本幅待修，请查看状态记录。';
+      }
     }
-    art.append(imageSVG(page, state.mode === 'page' ? null : frame.panel_region, state.mode === 'page'));
-    $('original').href = assetURL(page.image_ref); $('original').hidden = false;
-    $('imageCaption').textContent = state.mode === 'page' ?
-      '原页 ' + state.pageId + ' · 点击画格进入逐镜' :
-      frame.sheet_ref + ' / ' + frame.panel_id + ' · 代表帧 F' + frame.representative_frame;
-    const status = state.mode === 'page' ? page.status : observedStatus(frame);
-    if (['needs_revision', 'needs_fix'].includes(status)) {
-      $('frameNotice').hidden = false;
-      $('frameNotice').textContent = state.mode === 'page' ? page.observation :
-        frame.observation?.notes || '本幅待修，请查看状态记录。';
-    }
-  } else if (state.source === 'formal') {
+  }
+  if (frame.is_black) {
+    formalArt.append(el('div', 'black-art')); $('formalCaption').textContent = '黑场按原时间线显示';
+  } else if (!frame.board_art) {
+    emptyArt('正式分镜待交付', frame.requirement, formalArt);
+  } else {
     const boardArt = frame.board_art;
-    if (!boardArt) { emptyArt('正式分镜待交付', frame.requirement); return; }
     const img = el('img');
     img.addEventListener('load', () => {
       if (!img.isConnected) return;
       const region = [0, 0, img.naturalWidth, img.naturalHeight];
       img.replaceWith(imageSVG({ image_ref: boardArt, width_px: img.naturalWidth,
-        height_px: img.naturalHeight }, region, false, true, region));
+        height_px: img.naturalHeight }, region, false, true, region, 'formal'));
+      applyZoom();
+    }, { once: true });
+    img.addEventListener('error', () => {
+      if (!img.isConnected) return;
+      formalArt.replaceChildren(); formalArt.style.width = '';
+      emptyArt('正式图无法读取', '请检查正式原件引用。', formalArt);
     }, { once: true });
     img.src = assetURL(boardArt); img.alt = frame.id + ' 正式分镜';
-    art.append(img); $('original').href = img.src; $('original').hidden = false;
-    $('imageCaption').textContent = '代表帧 F' + frame.representative_frame;
+    formalArt.append(img); $('formalOriginal').href = img.src; $('formalOriginal').hidden = false;
+    $('formalCaption').textContent = frame.id + ' · 代表帧 F' + frame.representative_frame;
   }
-
   applyZoom();
 }
 
 function applyZoom() {
-  $('art').style.width = Math.round(state.zoom * 100) + '%';
+  for (const [viewerId, artId] of [['viewer', 'art'], ['formalViewer', 'formalArt']]) {
+    const viewer = $(viewerId);
+    const art = $(artId);
+    const media = art.firstElementChild;
+    const box = media?.viewBox?.baseVal;
+    const width = box?.width || media?.naturalWidth;
+    const height = box?.height || media?.naturalHeight;
+    if (!(width > 0 && height > 0)) continue;
+    const style = getComputedStyle(viewer);
+    const availableWidth = viewer.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const availableHeight = viewer.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    if (!(availableWidth > 0 && availableHeight > 0)) continue;
+    const fitScale = Math.min(availableWidth / width, availableHeight / height);
+    art.style.width = Math.floor(width * fitScale * state.zoom) + 'px';
+  }
 }
 function renderFrameText() {
   $('intent').textContent = current().shot?.edit?.description || current().shot?.intent || '';
@@ -495,10 +517,9 @@ function renderDetails() {
 function render() {
   $('imageReading').hidden = state.docs;
   $('documentReading').hidden = !state.docs;
-  document.querySelectorAll('[data-source]').forEach(button => button.classList.toggle('active', button.dataset.source === state.source && !state.docs));
   document.querySelectorAll('[data-mode]').forEach(button => button.classList.toggle('active', button.dataset.mode === state.mode));
   document.querySelectorAll('[data-detail]').forEach(button => button.classList.toggle('active', button.dataset.detail === state.detail));
-  $('modeButtons').hidden = state.source !== 'board' || state.docs;
+  $('modeButtons').hidden = state.docs;
   renderList();
   if (!state.docs) { renderImage(); renderChips(); renderFrameText(); }
   renderDetails(); syncRoute();
@@ -512,7 +533,7 @@ function chooseFrame(id) {
 }
 function choosePage(id) {
   if (!state.pages.includes(id)) return;
-  state.pageId = id; state.mode = 'page'; state.source = 'board'; state.docs = false; state.zoom = 1;
+  state.pageId = id; state.mode = 'page'; state.docs = false; state.zoom = 1;
   if (current().frame?.sheet_ref !== id) state.index = state.frames.findIndex(frame => frame.sheet_ref === id);
   render();
 }
@@ -612,8 +633,7 @@ document.addEventListener('click', event => {
   if (!target) return;
   if (target.dataset.shot) chooseFrame(target.dataset.shot);
   if (target.dataset.frame) { event.preventDefault(); chooseFrame(target.dataset.frame); }
-  if (target.dataset.source) { state.source = target.dataset.source; state.mode = 'frame'; state.docs = false; state.zoom = 1; render(); }
-  if (target.dataset.mode === 'frame') { state.mode = 'frame'; render(); }
+  if (target.dataset.mode === 'frame') { state.mode = 'frame'; state.zoom = 1; render(); }
   if (target.dataset.mode === 'page' && state.pages.length) choosePage(current().frame?.sheet_ref || state.pageId || state.pages[0]);
   if (target.dataset.detail) { state.detail = target.dataset.detail; renderDetails(); document.querySelectorAll('[data-detail]').forEach(button => button.classList.toggle('active', button === target)); }
   if (target.dataset.document) openDocument(state.payload.documents.find(doc => doc.name === target.dataset.document));
@@ -631,10 +651,12 @@ const zoom = delta => { state.zoom = Math.max(.4, Math.min(4, state.zoom + delta
 $('zoomIn').addEventListener('click', () => zoom(.2));
 $('zoomOut').addEventListener('click', () => zoom(-.2));
 $('fit').addEventListener('click', () => { state.zoom = 1; applyZoom(); });
+const imageResize = new ResizeObserver(applyZoom);
+imageResize.observe($('viewer')); imageResize.observe($('formalViewer'));
 $('annotations').addEventListener('change', renderImage);
 $('fullscreen').addEventListener('click', async () => {
   if (document.fullscreenElement) await document.exitFullscreen();
-  else await $('viewer').requestFullscreen();
+  else await $('imageComparison').requestFullscreen();
 });
 document.addEventListener('keydown', event => {
   if (/INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey || state.docs) return;

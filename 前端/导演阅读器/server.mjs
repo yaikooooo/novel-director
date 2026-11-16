@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { DATA_FILE, READER_VERSION, designFrames, frameCounts, validateDesign, validateMotion } from './contract.mjs';
+import { ASSET_FILE, validateAssets } from './assets-contract.mjs';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 const workspace = path.resolve(appDir, '../..');
@@ -65,6 +66,7 @@ export async function validateFiles(document, folder) {
   const references = [];
   for (const [id, sheet] of Object.entries(document?.design?.board_sheets || {})) references.push([id, sheet.image_ref]);
   for (const frame of designFrames(document)) {
+    if (frame.design_generation !== undefined) references.push([frame.id + '.design_ref', frame.design_ref]);
     if (frame.board_art) references.push([frame.id + '.board_art', frame.board_art]);
   }
   for (const [id, scene] of Object.entries(document?.design?.scenes || {})) {
@@ -82,6 +84,13 @@ export async function validateFiles(document, folder) {
     } catch (error) { issues.push({ field, message: '素材不可读 ' + ref + '，' + error.message }); }
   }
   return issues;
+}
+
+export async function assetData(id) {
+  const folder = await chapterFolder(id);
+  const document = await optionalJSON(path.join(folder, ASSET_FILE));
+  return { id, base: '/files/' + encodePath(relative(folder)) + '/', document,
+    issues: document ? await validateAssets(document, folder) : [] };
 }
 
 export async function chapterData(id) {
@@ -147,9 +156,11 @@ export async function handleRequest(req, res) {
     if (url.pathname === '/api/health') return json(res, 200, { app: 'director-reader', version: READER_VERSION, root: projectRoot });
     if (url.pathname === '/api/library') return json(res, 200, { chapters: await library() });
     if (url.pathname === '/api/chapter') return json(res, 200, await chapterData(url.searchParams.get('id') || 'example'));
+    if (url.pathname === '/api/assets') return json(res, 200, await assetData(url.searchParams.get('id') || 'example'));
     if (url.pathname.startsWith('/files/')) return await sendFile(req, res, await safeAsset(url.pathname));
     const routes = { '/': 'public/index.html', '/example': 'public/index.html',
       '/voices': 'public/voices.html', '/voices.js': 'public/voices.js', '/voices.css': 'public/voices.css',
+      '/assets': 'public/assets.html', '/assets.js': 'public/assets.js', '/assets.css': 'public/assets.css',
       '/app.js': 'public/app.js', '/styles.css': 'public/styles.css',
       '/contract.mjs': 'contract.mjs', '/数据接口.md': '数据接口.md' };
     const target = routes[decodeURIComponent(url.pathname)];

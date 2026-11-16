@@ -94,6 +94,21 @@ export function validateDesign(document) {
       const fb = base + '.design_frames.' + frame.id;
       if (!frame.id || framesById.has(frame.id)) add(fb, '图号为空或重复。');
       framesById.set(frame.id, frame);
+      if (frame.design_generation !== undefined) {
+        const generation = frame.design_generation;
+        if (typeof frame.design_ref !== 'string' || !frame.design_ref.trim()) add(fb + '.design_ref', '第二轮须引用实际生成的原生独立单张。');
+        if (!generation || typeof generation.tool !== 'string' || !generation.tool.trim() ||
+            typeof generation.prompt !== 'string' || !generation.prompt.trim() ||
+            !Array.isArray(generation.references) || !generation.references.length) {
+          add(fb + '.design_generation', '第二轮须记录实际工具、完整提示词与参考来源。');
+        }
+        const size = generation?.resolution_px;
+        if (!Array.isArray(size) || size.length !== 2 || size.some(value => !Number.isInteger(value) || value <= 0)) add(fb + '.design_generation.resolution_px', '原生独立单张须记录实测宽高。');
+        if (frame.board_art_generation?.tool === 'gemini-nano-banana-2.1' &&
+            frame.board_art_generation.references?.[0]?.image_ref !== frame.design_ref) {
+          add(fb + '.board_art_generation.references', '第三轮首个几何参考须为design_ref对应的第二轮独立单张，不能跳回故事板裁图。');
+        }
+      }
       for (const annotation of frame.annotations || []) {
         if (!['action', 'camera', 'note'].includes(annotation.kind) || !annotation.label) add(fb + '.annotations', '标注须有 action/camera/note 类别及短说明。');
         const points = [...(annotation.points || []), ...(annotation.label_at ? [annotation.label_at] : [])];

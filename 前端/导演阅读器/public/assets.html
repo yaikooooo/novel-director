@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>03 角色资产交付</title>
+  <link rel="stylesheet" href="/assets.css">
+  <script type="module" src="/assets.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" id="readerLink" href="/example">导演阅读器</a>
+    <label>作品与章节 <select id="chapterSelect" aria-label="作品与章节"></select></label>
+    <nav><a href="/voices">声线库</a><button id="refresh">刷新数据</button></nav>
+  </header>
+  <main>
+    <div id="error" class="notice error" role="alert" hidden></div>
+    <section class="heading">
+      <div><p class="eyebrow" id="workName">03 / 角色资产交付</p><h1 id="pageTitle">角色资产</h1><p id="summary" class="muted"></p></div>
+      <a id="referenceLink" class="text-link" target="_blank" rel="noopener" hidden>章节资产引用表 ↗</a>
+    </section>
+    <section id="review" class="review" hidden><strong id="reviewStatus"></strong><span id="reviewNote"></span></section>
+    <nav id="characterNav" class="character-nav" aria-label="角色导航"></nav>
+    <div id="characters"></div>
+    <p id="empty" class="notice" hidden>本章尚未交付03角色资产页面。</p>
+  </main>
+  <dialog id="preview" aria-labelledby="previewTitle">
+    <div class="preview-head"><strong id="previewTitle"></strong><a id="previewOriginal" target="_blank" rel="noopener">打开原图 ↗</a><button id="closePreview" aria-label="关闭大图">关闭</button></div>
+    <img id="previewImage" alt="">
+  </dialog>
+  <noscript>请启用 JavaScript 查看角色图片并播放样音。</noscript>
+</body>
+</html>
